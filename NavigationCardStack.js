@@ -62,6 +62,7 @@ type Props = {
   navigationState: NavigationParentState,
   renderOverlay: ?NavigationSceneRenderer,
   renderScene: NavigationSceneRenderer,
+  onNavigateBack: Function,
 };
 
 type DefaultProps = {
@@ -91,6 +92,7 @@ class NavigationCardStack extends React.Component<DefaultProps, Props, void> {
     navigationState: NavigationPropTypes.navigationParentState.isRequired,
     renderOverlay: PropTypes.func,
     renderScene: PropTypes.func.isRequired,
+    onNavigateBack: PropTypes.func.isRequired,
   };
 
   static defaultProps: DefaultProps = {
@@ -104,6 +106,7 @@ class NavigationCardStack extends React.Component<DefaultProps, Props, void> {
 
   componentWillMount(): void {
     this._renderScene = this._renderScene.bind(this);
+    this._onNavigate = this._onNavigate.bind(this);
   }
 
   shouldComponentUpdate(nextProps: Object, nextState: void): boolean {
@@ -120,10 +123,25 @@ class NavigationCardStack extends React.Component<DefaultProps, Props, void> {
         navigationState={this.props.navigationState}
         renderOverlay={this.props.renderOverlay}
         renderScene={this._renderScene}
+        onNavigate={this._onNavigate}
         // $FlowFixMe - style should be declared
         style={[styles.animatedView, this.props.style]}
       />
     );
+  }
+
+  _onNavigate(action: any): void {
+    switch (action) {
+      case NavigationCardStackPanResponder.Actions.BACK:
+        this.props.onNavigateBack && this.props.onNavigateBack();
+        break;
+      // case NavigationPagerPanResponder.Actions.JUMP_BACK:
+      // case NavigationPagerPanResponder.Actions.JUMP_FORWARD:
+      default:
+        if (__DEV__) {
+          console.warn('unsupported gesture action', action);
+        }
+    }
   }
 
   _renderScene(props: NavigationSceneRendererProps): ReactElement {
