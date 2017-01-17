@@ -39,7 +39,6 @@ const NavigationContainer = require('./NavigationContainer');
 const NavigationCardStackPanResponder = require('./NavigationCardStackPanResponder');
 const NavigationPropTypes = require('./NavigationPropTypes');
 const React = require('react');
-const ReactComponentWithPureRenderMixin = require('react-addons-pure-render-mixin');
 const StyleSheet = require('react-native').StyleSheet;
 
 const emptyFunction = require('fbjs/lib/emptyFunction');
@@ -107,14 +106,6 @@ class NavigationCardStack extends React.Component<DefaultProps, Props, void> {
   componentWillMount(): void {
     this._renderScene = this._renderScene.bind(this);
     this._onNavigate = this._onNavigate.bind(this);
-  }
-
-  shouldComponentUpdate(nextProps: Object, nextState: void): boolean {
-    return ReactComponentWithPureRenderMixin.shouldComponentUpdate.call(
-      this,
-      nextProps,
-      nextState
-    );
   }
 
   render(): ReactElement {

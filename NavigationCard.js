@@ -41,7 +41,6 @@ const NavigationPagerStyleInterpolator = require('./NavigationPagerStyleInterpol
 const NavigationPointerEventsContainer = require('./NavigationPointerEventsContainer');
 const NavigationPropTypes = require('./NavigationPropTypes');
 const React = require('react');
-const ReactComponentWithPureRenderMixin = require('react-addons-pure-render-mixin');
 const StyleSheet = require('react-native').StyleSheet;
 const View = require('react-native').View;
 
@@ -50,11 +49,6 @@ import type  {
   NavigationSceneRenderer,
   NavigationSceneRendererProps,
 } from 'NavigationTypeDefinition';
-
-type SceneViewProps =  {
-  sceneRenderer: NavigationSceneRenderer,
-  sceneRendererProps: NavigationSceneRendererProps,
-};
 
 type Props = NavigationSceneRendererProps & {
   onComponentRef: (ref: any) => void,
@@ -65,25 +59,6 @@ type Props = NavigationSceneRendererProps & {
 };
 
 const {PropTypes} = React;
-
-class SceneView extends React.Component<any, SceneViewProps, any> {
-
-  static propTypes = {
-    sceneRenderer: PropTypes.func.isRequired,
-    sceneRendererProps: NavigationPropTypes.SceneRenderer,
-  };
-
-  shouldComponentUpdate(nextProps: SceneViewProps, nextState: any): boolean {
-    return (
-      nextProps.sceneRendererProps.scene.navigationState !==
-        this.props.sceneRendererProps.scene.navigationState
-    );
-  }
-
-  render(): ?ReactElement {
-    return this.props.sceneRenderer(this.props.sceneRendererProps);
-  }
-}
 
 /**
  * Component that renders the scene as card for the <NavigationCardStack />.
@@ -99,14 +74,6 @@ class NavigationCard extends React.Component<any, Props, any> {
     renderScene: PropTypes.func.isRequired,
     style: PropTypes.any,
   };
-
-  shouldComponentUpdate(nextProps: Props, nextState: any): boolean {
-    return ReactComponentWithPureRenderMixin.shouldComponentUpdate.call(
-      this,
-      nextProps,
-      nextState
-    );
-  }
 
   render(): ReactElement {
     const {
@@ -131,10 +98,7 @@ class NavigationCard extends React.Component<any, Props, any> {
         pointerEvents={pointerEvents}
         ref={this.props.onComponentRef}
         style={[styles.main, viewStyle]}>
-        <SceneView
-          sceneRenderer={renderScene}
-          sceneRendererProps={props}
-        />
+        {renderScene(props)}
       </Animated.View>
     );
   }
